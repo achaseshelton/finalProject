@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Books;
+use App\Models\Book;
 use Illuminate\Http\Request;
+use App\Http\Resources\BooksResource;
 
 class BooksController extends Controller
 {
@@ -14,7 +15,7 @@ class BooksController extends Controller
      */
     public function index()
     {
-        //
+        return BooksResource::collection(Book::all());
     }
 
     /**
@@ -35,7 +36,15 @@ class BooksController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $faker = \Faker\Factory::create(1);
+        $book = Book::create([
+            'name' => $faker->name,
+            'description' => $faker->sentence,
+            'isbn' => $faker->isbn13,
+            'checked_out' => false
+        ]);
+
+        return new BooksResource($book);
     }
 
     /**
@@ -44,9 +53,9 @@ class BooksController extends Controller
      * @param  \App\Models\Books  $books
      * @return \Illuminate\Http\Response
      */
-    public function show(Books $books)
+    public function show(Book $book)
     {
-        //
+        return new BooksResource($book);
     }
 
     /**
@@ -67,9 +76,16 @@ class BooksController extends Controller
      * @param  \App\Models\Books  $books
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Books $books)
+    public function update(Request $request, Book $book)
     {
-        //
+        $book->update([
+            'name' => $request->input('name'),
+            'description' => $request->input('description'),
+            'isbn' => $request->input('isbn'),
+            'checked_out' => $request->inpute('checked_out')
+        ]);
+
+        return new BooksResource($book);
     }
 
     /**
@@ -78,8 +94,9 @@ class BooksController extends Controller
      * @param  \App\Models\Books  $books
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Books $books)
+    public function destroy(Book $book)
     {
-        //
+        $book->delete();
+        return response(null, 204);
     }
 }
