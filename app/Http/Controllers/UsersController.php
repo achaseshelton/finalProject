@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Book;
+use App\Models\User;
 use Illuminate\Http\Request;
-use App\Http\Resources\BooksResource;
+use App\Http\Resources\UsersResource;
+use App\Models\Role;
+use Illuminate\Support\Str;
 
-class BooksController extends Controller
+class Users extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,7 +17,7 @@ class BooksController extends Controller
      */
     public function index()
     {
-        return BooksResource::collection(Book::all());
+        return UsersResource::collection(User::all());
     }
 
     /**
@@ -37,34 +39,36 @@ class BooksController extends Controller
     public function store(Request $request)
     {
         $faker = \Faker\Factory::create(1);
-        $book = Book::create([
-            'name' => $faker->name,
-            'description' => $faker->sentence,
-            'isbn' => $faker->isbn13,
-            'checked_out' => false
+        $user = User::create([
+            'name' => $this->faker->name(),
+            'email' => $this->faker->unique()->safeEmail(),
+            'password' => $this->faker->password(),
+            "card_number" => $this->faker->ean13(),
+            'remember_token' => Str::random(10),
+            'role' => Role::all()->random()->id
         ]);
 
-        return new BooksResource($book);
+        return new UsersResource($user);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Books  $books
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function show(Book $book)
+    public function show(User $user)
     {
-        return new BooksResource($book);
+        return new UsersResource($user);
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Books  $books
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function edit(Book $book)
+    public function edit(User $user)
     {
         //
     }
@@ -73,30 +77,29 @@ class BooksController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Books  $books
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Book $book)
+    public function update(Request $request, User $user)
     {
-        $book->update([
+        $user->update([
             'name' => $request->input('name'),
-            'description' => $request->input('description'),
-            'isbn' => $request->input('isbn'),
-            'checked_out' => $request->input('checked_out')
+            'email' => $request->input('email'),
+            'password' => $request->input('password'),
+            'card_number' => $request->input('card_number'),
+            'role' => $request->input('role')
         ]);
-
-        return new BooksResource($book);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Books  $books
+     * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Book $book)
+    public function destroy(User $user)
     {
-        $book->delete();
+        $user->delete();
         return response(null, 204);
     }
 }
