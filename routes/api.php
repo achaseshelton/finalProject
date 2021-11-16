@@ -24,5 +24,9 @@ Route::middleware('auth:api')->prefix('v1')->group(function() {
 
     Route::apiResource('/books', BooksController::class);
 
+    Route::apiResource('/users', UsersController::class);
+
+    Route::apiResource('/checkouts', CheckoutsController::class);
+
 });
 
