@@ -18,7 +18,7 @@ class CheckoutsController extends Controller
      */
     public function index()
     {
-        //
+        return CheckoutsResource::collection(Checkout::all());
     }
 
     /**
@@ -38,10 +38,14 @@ class CheckoutsController extends Controller
      */
     public function store(Request $request)
     {
+        $book = Book::all()->random();
+        $book->checked_out = true;
+        $book->save();
+        // find the books where the id is equal to the book_id and change the value of checeked-out to true.
         $faker = \Faker\Factory::create(1);
         $checkout = Checkout::create([
             'user_id' => User::all()->random()->id,
-            'book_id' => Book::all()->random()->id,
+            'book_id' => $book->id,
             'date_checked_out' => Carbon::now(),
             'due_date' => Carbon::now()->addDays(14)
         ]);
@@ -57,7 +61,7 @@ class CheckoutsController extends Controller
      */
     public function show(Checkout $checkout)
     {
-        //
+        return new CheckoutsResource($checkout);
     }
 
     /**
@@ -96,6 +100,7 @@ class CheckoutsController extends Controller
      */
     public function destroy(Checkout $checkout)
     {
-        //
+        $checkout->delete();
+        return response(null, 204);
     }
 }

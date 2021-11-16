@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Book;
 use Illuminate\Http\Request;
 use App\Http\Resources\BooksResource;
+use App\Models\BookAuthor;
 
 class BooksController extends Controller
 {
@@ -96,6 +97,9 @@ class BooksController extends Controller
      */
     public function destroy(Book $book)
     {
+        // find the books in the book author table wheren the book_id is equal to the $book and then delete that from the book authors table
+        $authorBooks = BookAuthor::find('book_id')->where('book_id', '=', $book);
+        $authorBooks->delete();
         $book->delete();
         return response(null, 204);
     }

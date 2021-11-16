@@ -17,10 +17,14 @@ class CheckoutFactory extends Factory
      */
     public function definition()
     {
+        $book = Book::all()->random();
+        $book->checked_out = true;
+        $book->save();
+        // find the books where the id is equal to the book_id and then change the value of checked_out to true.
         // $time = Carbon::now();
         return [
             'user_id' => User::all()->random()->id,
-            'book_id' => Book::all()->random()->id,
+            'book_id' => $book->id,
             'date_checked_out' => Carbon::now(),
             'due_date' => Carbon::now()->addDays(14),
         ];

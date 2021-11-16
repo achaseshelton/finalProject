@@ -6,6 +6,7 @@ use App\Models\Author;
 use Illuminate\Http\Request;
 use App\Http\Resources\AuthorsResource;
 use App\Http\Requests\AuthorsRequest;
+use App\Models\BookAuthor;
 
 class AuthorsController extends Controller
 {
@@ -92,6 +93,9 @@ class AuthorsController extends Controller
      */
     public function destroy(Author $author)
     {
+        // find the authors in the book author table where the author_id is equal to $author and delete them
+        $bookAuthors = BookAuthor::find('author_id')->where('author_id', '=', $author);
+        $bookAuthors->delete();
         $author->delete();
         return response(null, 204);
     }
