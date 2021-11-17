@@ -38,12 +38,18 @@ class AuthorsController extends Controller
      */
     public function store(Request $request)
     {
+        $user = $request->user();
+        // if user->role is less than 3 run this else unauthorized user
+        if ($user->role_id < 3) {
         $faker = \Faker\Factory::create(1);
         $author = Author::create([
             'name' => $faker->name
         ]);
 
         return new AuthorsResource($author);
+        } else {
+            return 'user not authorized';
+        }
     }
 
     /**
@@ -76,13 +82,19 @@ class AuthorsController extends Controller
      * @param  \App\Models\Author  $author
      * @return \Illuminate\Http\Response
      */
-    public function update(AuthorsRequest $request, Author $author)
+    public function update(Request $request, Author $author)
     {
+        $user = $request->user();
+        // if user->role is less than 3 run this else unauthorized user
+        if ($user->role_id < 3) {
         $author->update([
             'name' => $request->input('name')
         ]);
 
         return new AuthorsResource($author);
+        } else {
+            return 'user not authorized';
+        }
     }
 
     /**
@@ -91,12 +103,22 @@ class AuthorsController extends Controller
      * @param  \App\Models\Author  $author
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Author $author)
+    public function destroy(Request $request, Author $author)
     {
         // find the authors in the book author table where the author_id is equal to $author and delete them
-        $bookAuthors = BookAuthor::find('author_id')->where('author_id', '=', $author);
-        $bookAuthors->delete();
+
+        $user = $request->user();
+        // if user->role is less than 3 run this else unauthorized user
+        if ($user->role_id < 3) {
+        $bookAuthors = BookAuthor::all()->where('author_id', '=', $author->id);
+        foreach ($bookAuthors as $id => $bookAuthor) {
+            $author = BookAuthor::find($bookAuthor['id']);
+            $author->delete();
+        }
         $author->delete();
         return response(null, 204);
+        } else {
+            return 'user not authorized';
+        }
     }
 }

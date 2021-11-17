@@ -19,7 +19,7 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique();
             $table->string('password');
             $table->string('card_number')->unique();
-            $table->foreignid('role')->constrained('roles');
+            $table->foreignid('role_id')->constrained('roles');
             $table->rememberToken();
             $table->timestamps();
         });

@@ -7,17 +7,25 @@ use Illuminate\Http\Request;
 use App\Http\Resources\UsersResource;
 use App\Models\Role;
 use Illuminate\Support\Str;
+use App\Models\Checkout;
 
-class Users extends Controller
+class UsersController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $user = $request->user();
+
+        // if user->role is less than 3 run this else unauthorized user
+        if($user->role_id < 3) {
         return UsersResource::collection(User::all());
+        } else {
+            return 'user not authorized';
+        }
     }
 
     /**
@@ -38,17 +46,23 @@ class Users extends Controller
      */
     public function store(Request $request)
     {
+        $user_role = $request->user();
+        // if user->role is less than 3 run this else unauthorized user
+        if ($user_role->role_id < 3) {
         $faker = \Faker\Factory::create(1);
         $user = User::create([
-            'name' => $this->faker->name(),
-            'email' => $this->faker->unique()->safeEmail(),
-            'password' => $this->faker->password(),
-            "card_number" => $this->faker->ean13(),
+            'name' => $faker->name,
+            'email' => $faker->unique()->safeEmail,
+            'password' => $faker->password,
+            "card_number" => $faker->ean13,
             'remember_token' => Str::random(10),
-            'role' => Role::all()->random()->id
+            'role_id' => Role::all()->random()->id
         ]);
 
         return new UsersResource($user);
+        } else {
+            return 'user not authorized';
+        }
     }
 
     /**
@@ -57,9 +71,15 @@ class Users extends Controller
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function show(User $user)
+    public function show(Request $request, User $user)
     {
+        $user_role = $request->user();
+        // if user->role is less than 3 run this else unauthorized user
+        if ($user_role->role_id < 3) {
         return new UsersResource($user);
+        } else {
+            return 'user not authorized';
+        }
     }
 
     /**
@@ -82,13 +102,20 @@ class Users extends Controller
      */
     public function update(Request $request, User $user)
     {
+
+        $user_role = $request->user();
+        // if user->role is less than 3 run this else unauthorized user
+        if ($user_role->role_id < 3) {
         $user->update([
             'name' => $request->input('name'),
             'email' => $request->input('email'),
             'password' => $request->input('password'),
             'card_number' => $request->input('card_number'),
-            'role' => $request->input('role')
+            'role_id' => Role::all()->random()->id
         ]);
+        } else {
+            return 'user not authorized';
+        }
     }
 
     /**
@@ -97,9 +124,15 @@ class Users extends Controller
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user)
+    public function destroy(Request $request, User $user)
     {
+        $user_role = $request->user();
+        // if user->role is less than 3 run this else unauthorized user
+        if ($user_role->role_id === 1) {
         $user->delete();
         return response(null, 204);
+        } else {
+            return 'user not authorized';
+        }
     }
 }

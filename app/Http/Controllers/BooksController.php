@@ -37,6 +37,10 @@ class BooksController extends Controller
      */
     public function store(Request $request)
     {
+
+        $user = $request->user();
+        // if user->role is less than 3 run this else unauthorized user
+        if ($user->role_id < 3) {
         $faker = \Faker\Factory::create(1);
         $book = Book::create([
             'name' => $faker->name,
@@ -46,6 +50,9 @@ class BooksController extends Controller
         ]);
 
         return new BooksResource($book);
+        } else {
+            return 'user not authorized';
+        }
     }
 
     /**
@@ -79,6 +86,9 @@ class BooksController extends Controller
      */
     public function update(Request $request, Book $book)
     {
+        $user = $request->user();
+        // if user->role is less than 3 run this else unauthorized user
+        if ($user->role_id < 3) {
         $book->update([
             'name' => $request->input('name'),
             'description' => $request->input('description'),
@@ -87,6 +97,9 @@ class BooksController extends Controller
         ]);
 
         return new BooksResource($book);
+        } else {
+            return 'user not authorized';
+        }
     }
 
     /**
@@ -95,12 +108,24 @@ class BooksController extends Controller
      * @param  \App\Models\Books  $books
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Book $book)
+    public function destroy(Request $request, Book $book)
     {
         // find the books in the book author table wheren the book_id is equal to the $book and then delete that from the book authors table
-        $authorBooks = BookAuthor::find('book_id')->where('book_id', '=', $book);
-        $authorBooks->delete();
+        $authorBooks = BookAuthor::all()->where('book_id', '=', $book->id);
+
+        // for each item in author books array
+        $user = $request->user();
+        // if user->role is less than 3 run this else unauthorized user
+        if ($user->role_id < 3) {
+        foreach ($authorBooks as $key => $authorBook) {
+            $book = BookAuthor::find($authorBook['id']);
+            $book->delete();
+        }
+
         $book->delete();
         return response(null, 204);
+       } else {
+           return 'user not authorized';
+       }
     }
 }

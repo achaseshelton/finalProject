@@ -16,9 +16,15 @@ class CheckoutsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $user = $request->user();
+        // if user->role is less than 3 run this else unauthorized user
+        if ($user->role_id < 3) {
         return CheckoutsResource::collection(Checkout::all());
+        } else {
+            return 'user not authorized';
+        }
     }
 
     /**
@@ -38,6 +44,9 @@ class CheckoutsController extends Controller
      */
     public function store(Request $request)
     {
+        $user = $request->user();
+        // if user->role is less than 3 run this else unauthorized user
+        if ($user->role_id < 3) {
         $book = Book::all()->random();
         $book->checked_out = true;
         $book->save();
@@ -51,6 +60,9 @@ class CheckoutsController extends Controller
         ]);
 
         return new CheckoutsResource($checkout);
+        } else {
+            return 'user not authorized';
+        }
     }
 
     /**
@@ -59,9 +71,15 @@ class CheckoutsController extends Controller
      * @param  \App\Models\Checkout  $checkout
      * @return \Illuminate\Http\Response
      */
-    public function show(Checkout $checkout)
+    public function show(Request $request, Checkout $checkout)
     {
+        $user = $request->user();
+        // if user->role is less than 3 run this else unauthorized user
+        if ($user->role_id < 3) {
         return new CheckoutsResource($checkout);
+        } else {
+            return 'user not authorized';
+        }
     }
 
     /**
@@ -84,12 +102,18 @@ class CheckoutsController extends Controller
      */
     public function update(Request $request, Checkout $checkout)
     {
+        $user = $request->user();
+        // if user->role is less than 3 run this else unauthorized user
+        if ($user->role_id < 3) {
         $checkout->update([
             'user_id' => $request->input('user_id'),
             'book_id' => $request->input('book_id'),
             'date_checked_out' => $request->input('date_checked_out'),
             'due_date' => $request->input('due_date')
         ]);
+        } else {
+            return 'user not authorized';
+        }
     }
 
     /**
@@ -98,9 +122,15 @@ class CheckoutsController extends Controller
      * @param  \App\Models\Checkout  $checkout
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Checkout $checkout)
+    public function destroy(Request $request, Checkout $checkout)
     {
+        $user = $request->user();
+        // if user->role is less than 3 run this else unauthorized user
+        if ($user->role_id < 3) {
         $checkout->delete();
         return response(null, 204);
+        } else {
+            return 'user not authorized';
+        }
     }
 }
