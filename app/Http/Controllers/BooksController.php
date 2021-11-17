@@ -6,6 +6,7 @@ use App\Models\Book;
 use Illuminate\Http\Request;
 use App\Http\Resources\BooksResource;
 use App\Models\BookAuthor;
+use App\Models\Author;
 
 class BooksController extends Controller
 {
@@ -48,6 +49,10 @@ class BooksController extends Controller
             'isbn' => $faker->isbn13,
             'checked_out' => false
         ]);
+        $bookAuthor = new BookAuthor;
+        $bookAuthor->book_id = $book->id;
+        $bookAuthor->author_id = Author::all()->random()->id;
+        $bookAuthor->save();
 
         return new BooksResource($book);
         } else {
@@ -89,6 +94,7 @@ class BooksController extends Controller
         $user = $request->user();
         // if user->role is less than 3 run this else unauthorized user
         if ($user->role_id < 3) {
+
         $book->update([
             'name' => $request->input('name'),
             'description' => $request->input('description'),
