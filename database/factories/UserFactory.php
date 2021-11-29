@@ -22,9 +22,7 @@ class UserFactory extends Factory
             'name' => $this->faker->name(),
             'email' => $this->faker->unique()->safeEmail(),
             'password' => $password, // password
-            "card_number" => $this->faker->ean13(),
-            'remember_token' => Str::random(10),
-            'role_id' => Role::all()->random()->id
+            'remember_token' => Str::random(10)
         ];
     }
 

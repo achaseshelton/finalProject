@@ -54,9 +54,7 @@ class UsersController extends Controller
             'name' => $faker->name,
             'email' => $faker->unique()->safeEmail,
             'password' => $faker->password,
-            "card_number" => $faker->ean13,
-            'remember_token' => Str::random(10),
-            'role_id' => Role::all()->random()->id
+            'remember_token' => Str::random(10)
         ]);
 
         return new UsersResource($user);
@@ -109,9 +107,7 @@ class UsersController extends Controller
         $user->update([
             'name' => $request->input('name'),
             'email' => $request->input('email'),
-            'password' => $request->input('password'),
-            'card_number' => $request->input('card_number'),
-            'role_id' => Role::all()->random()->id
+            'password' => $request->input('password')
         ]);
         } else {
             return 'user not authorized';
