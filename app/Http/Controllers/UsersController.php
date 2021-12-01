@@ -8,6 +8,8 @@ use App\Http\Resources\UsersResource;
 use App\Models\Role;
 use Illuminate\Support\Str;
 use App\Models\Checkout;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class UsersController extends Controller
 {
@@ -16,16 +18,32 @@ class UsersController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
+    public function register(Request $request)
+    {
+    }
+
+    public function find(Request $request)
+    {
+        $data['user_data'] = $request->user();
+        return response(['data'=>$data, 'message' => 'Found user data successfully', 'status' => true]);
+    }
+
+    /**    * Log a User out    *    * @param \Illuminate\Http\Request $request    * @return \Illuminate\Http\Response    */
+    public function logout(Request $request)
+    {
+        if (Auth::check()) {
+            $request->user()->token()->revoke();
+            return response()->json(['success' => 'logout success'], 200);
+        } else {
+            return response()->json(['error' => 'something went wrong'], 500);
+        }
+    }
+
     public function index(Request $request)
     {
-        $user = $request->user();
 
-        // if user->role is less than 3 run this else unauthorized user
-        if($user->role_id < 3) {
         return UsersResource::collection(User::all());
-        } else {
-            return 'user not authorized';
-        }
     }
 
     /**
@@ -44,25 +62,6 @@ class UsersController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
-        $user_role = $request->user();
-        // if user->role is less than 3 run this else unauthorized user
-        if ($user_role->role_id < 3) {
-        $faker = \Faker\Factory::create(1);
-        $user = User::create([
-            'name' => $faker->name,
-            'email' => $faker->unique()->safeEmail,
-            'password' => $faker->password,
-            'remember_token' => Str::random(10)
-        ]);
-
-        return new UsersResource($user);
-        } else {
-            return 'user not authorized';
-        }
-    }
-
     /**
      * Display the specified resource.
      *
@@ -74,7 +73,7 @@ class UsersController extends Controller
         $user_role = $request->user();
         // if user->role is less than 3 run this else unauthorized user
         if ($user_role->role_id < 3) {
-        return new UsersResource($user);
+            return new UsersResource($user);
         } else {
             return 'user not authorized';
         }
@@ -104,11 +103,11 @@ class UsersController extends Controller
         $user_role = $request->user();
         // if user->role is less than 3 run this else unauthorized user
         if ($user_role->role_id < 3) {
-        $user->update([
-            'name' => $request->input('name'),
-            'email' => $request->input('email'),
-            'password' => $request->input('password')
-        ]);
+            $user->update([
+                'name' => $request->input('name'),
+                'email' => $request->input('email'),
+                'password' => $request->input('password')
+            ]);
         } else {
             return 'user not authorized';
         }
@@ -125,8 +124,8 @@ class UsersController extends Controller
         $user_role = $request->user();
         // if user->role is less than 3 run this else unauthorized user
         if ($user_role->role_id === 1) {
-        $user->delete();
-        return response(null, 204);
+            $user->delete();
+            return response(null, 204);
         } else {
             return 'user not authorized';
         }

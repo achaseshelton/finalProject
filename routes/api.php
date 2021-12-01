@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthorsController;
 use App\Http\Controllers\BooksController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\CheckoutsController;
+use App\Http\Controllers\RestaurantsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,6 +24,9 @@ Route::middleware('auth:api')->prefix('v1')->group(function() {
     });
 
     Route::apiResource('/users', UsersController::class);
+    Route::get('/logout', [UsersController::class, 'logout']);
+    Route::get('/user', [UsersController::class, 'find']);
 
 });
 
+Route::get('/restaurants', [RestaurantsController::class, 'index']);
