@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use App\Models\Checkout;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class UsersController extends Controller
 {
@@ -21,18 +22,40 @@ class UsersController extends Controller
 
     public function register(Request $request)
     {
-        $password = Hash::make($request->password);
-        $user = new User;
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->password = $password;
-        $user->save();
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'email' => 'required|email|unique:users',
+            'password' => 'required',
+        ]);
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors(),
+            ], 401);
+        }
+        $input = $request->all();
+        $input['password'] = bcrypt($input['password']);
+        $input['status'] = true;
+        $input['is_active'] = true;
+        $user = User::create($input);
+        $success['token'] = $user->createToken('appToken')->accessToken;
+        $event = "register";
+        $createdAt = date("l jS \of F Y h:i:s A");
+        return response()->json([
+            'success' => true,
+            'access_token' => $success,
+            'user' => $user,
+            'event' => $event,
+            'created_at' => $createdAt
+        ]);
     }
+
+
 
     public function find(Request $request)
     {
         $data['user_data'] = $request->user();
-        return response(['data'=>$data, 'message' => 'Found user data successfully', 'status' => true]);
+        return response(['data' => $data, 'message' => 'Found user data successfully', 'status' => true]);
     }
 
     /**    * Log a User out    *    * @param \Illuminate\Http\Request $request    * @return \Illuminate\Http\Response    */
