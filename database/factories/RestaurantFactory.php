@@ -18,7 +18,7 @@ class RestaurantFactory extends Factory
             'name' => $this->faker->name(),
             'address' => $this->faker->address(),
             'price' => $this->faker->numberBetween(1, 5),
-            'cuisine' => array_rand($cuisines)
+            'cuisine' => $cuisines[array_rand($cuisines)]
             //
         ];
     }

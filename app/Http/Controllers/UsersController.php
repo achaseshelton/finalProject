@@ -21,6 +21,12 @@ class UsersController extends Controller
 
     public function register(Request $request)
     {
+        $password = Hash::make($request->password);
+        $user = new User;
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->password = $password;
+        $user->save();
     }
 
     public function find(Request $request)
