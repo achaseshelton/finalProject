@@ -23,21 +23,9 @@ class User extends Authenticatable
         'password'
     ];
 
-    protected $with = [
-        'favorites'
-    ];
-
     public function favorites()
     {
-        return $this->hasManyThrough(
-            '\App\Models\Restaurant',
-            '\App\Models\FavoriteRestaurant',
-            'user_id',
-            'id',
-            'id',
-            'restaurant_id'
-
-        );
+        return $this->hasMany(FavoriteRestaurant::class);
     }
     /**
      * The attributes that should be hidden for serialization.

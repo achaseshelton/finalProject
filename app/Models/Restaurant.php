@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\FavoriteRestaurant;
 
 class Restaurant extends Model
 {
@@ -15,4 +16,9 @@ class Restaurant extends Model
         'price',
         'cuisine'
     ];
+
+    public function favorites()
+    {
+        return $this->hasMany(FavoriteRestaurant::class);
+    }
 }

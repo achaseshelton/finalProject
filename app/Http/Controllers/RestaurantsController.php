@@ -15,7 +15,7 @@ class RestaurantsController extends Controller
      */
     public function index()
     {
-        return RestaurantsResource::collection(Restaurant::all());
+        return Restaurant::with(['favorites.user'])->get();
     }
 
     /**

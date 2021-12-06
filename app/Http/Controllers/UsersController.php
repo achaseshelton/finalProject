@@ -54,8 +54,8 @@ class UsersController extends Controller
 
     public function find(Request $request)
     {
-        $data['user_data'] = $request->user();
-        return response(['data' => $data, 'message' => 'Found user data successfully', 'status' => true]);
+        $user = User::with(['favorites.restaurant'])->where('id', $request->user()->id)->get();
+        return response(['data' => $user, 'message' => 'Found user data successfully', 'status' => true]);
     }
 
     /**    * Log a User out    *    * @param \Illuminate\Http\Request $request    * @return \Illuminate\Http\Response    */

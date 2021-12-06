@@ -28,6 +28,7 @@ Route::middleware('auth:api')->prefix('v1')->group(function() {
     Route::get('/logout', [UsersController::class, 'logout']);
     Route::get('/user', [UsersController::class, 'find']);
     Route::post('/favorite', [FavoriteRestaurantsController::class, 'create']);
+    Route::delete('/remove', [FavoriteRestaurantsController::class, 'remove']);
 
 });
 

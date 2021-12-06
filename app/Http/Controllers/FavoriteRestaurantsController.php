@@ -31,6 +31,13 @@ class FavoriteRestaurantsController extends Controller
         $favorite->save();
     }
 
+    public function remove(Request $request)
+    {
+        $user = $request->user();
+        $favorite = FavoriteRestaurant::where('user_id', '=', $user->id)->where('restaurant_id', '=', $request->restaurant_id);
+        $favorite->delete();
+    }
+
     /**
      * Store a newly created resource in storage.
      *
