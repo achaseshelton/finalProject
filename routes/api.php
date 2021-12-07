@@ -34,3 +34,5 @@ Route::middleware('auth:api')->prefix('v1')->group(function() {
 
 Route::post('/register', [UsersController::class, 'register']);
 Route::get('/restaurants', [RestaurantsController::class, 'index']);
+Route::get('/hungry', [RestaurantsController::class, 'random']);
+Route::get('/filter', [RestaurantsController::class, 'filter']);
