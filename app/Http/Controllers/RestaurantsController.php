@@ -6,6 +6,7 @@ use App\Models\Restaurant;
 use Illuminate\Http\Request;
 use App\Http\Resources\RestaurantsResource;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Log;
 
 class RestaurantsController extends Controller
 {
@@ -31,21 +32,36 @@ class RestaurantsController extends Controller
      */
     public function filter(Request $request)
     {
-        // can I do this query as a ternary if the user submits a search using name??? use strtolower on both names?
-
-        // $name = $request->name;
-        // ($name) ?
-        // return Restaurant::with(['favorites.user'])->where('name', '=', $name)
-        // :
         $search = $request->all();
-        $restaurants = Restaurant::
-        // with(['favorites.user'])
-        where('cuisine', $search['cuisine'])
-        // ->where('price', '<=', intval($request->price))
-        ->get();
-        $favs = $restaurants->load('favorites.user');
-        return $favs->toArray();
+
+        Log::debug($search);
+
+        if(isset($search['cuisine']) && isset($search['price'])) {
+            $restaurants = Restaurant::
+            where('cuisine', $search['cuisine'])
+            ->where('price', '<=', intval($search['price']))
+            ->get();
+            $favs = $restaurants->load('favorites.user');
+            return $favs->toArray();
+        }
+
+        if(isset($search['cuisine'])) {
+            $restaurants = Restaurant::
+            where('cuisine', $search['cuisine'])
+            ->get();
+            $favs = $restaurants->load('favorites.user');
+            return $favs->toArray();
+        }
+
+        if(isset($search['price'])) {
+            $restaurants = Restaurant::
+            where('price', $search['price'])
+            ->get();
+            $favs = $restaurants->load('favorites.user');
+            return $favs->toArray();
+        }
     }
+
 
     /**
      * Store a newly created resource in storage.
