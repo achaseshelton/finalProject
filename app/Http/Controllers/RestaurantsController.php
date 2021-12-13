@@ -22,7 +22,7 @@ class RestaurantsController extends Controller
 
     public function random()
     {
-        return Restaurant::with(['favorites.user'])->get()->random(1);
+        return Restaurant::with(['favorites.user'])->get()->random(3);
     }
 
     /**
@@ -33,8 +33,6 @@ class RestaurantsController extends Controller
     public function filter(Request $request)
     {
         $search = $request->all();
-
-        Log::debug($search);
 
         if(isset($search['cuisine']) && isset($search['price'])) {
             $restaurants = Restaurant::

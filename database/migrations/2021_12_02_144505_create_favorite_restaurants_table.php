@@ -15,16 +15,15 @@ class CreateFavoriteRestaurantsTable extends Migration
     {
         Schema::create('favorite_restaurants', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')
-                ->references('id')
-                ->on('users')
-                ->cascade('delete');
-            $table->unsignedBigInteger('restaurant_id');
-            $table->foreign('restaurant_id')
-                ->references('id')
-                ->on('users')
-                ->cascade('delete');
+
+            //$table->unsignedBigInteger('user_id');
+            $table->foreignId('user_id');
+
+            $table->foreignId('restaurant_id');
+            // $table->foreign('restaurant_id')
+            //     ->references('id')
+            //     ->on('restuarants');
+
             $table->timestamps();
         });
     }

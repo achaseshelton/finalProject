@@ -21,7 +21,8 @@ class FavoriteRestaurantSeeder extends Seeder
         for ($i = 0; $i < count($users); $i++) {
             $favoriteRestaurant = new FavoriteRestaurant;
             $favoriteRestaurant->user_id = $users[$i]['id'];
-            $favoriteRestaurant->restaurant_id = Restaurant::all()->random()->id;
+            $r = Restaurant::all()->random(1);
+            $favoriteRestaurant->restaurant_id = $r[0]['id'];
             $favoriteRestaurant->save();
         }
     }
